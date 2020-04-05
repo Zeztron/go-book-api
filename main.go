@@ -10,6 +10,7 @@ package main
 */
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -30,9 +31,13 @@ type Author struct {
 	Lastname  string `json:"lastname"`
 }
 
+// Init books var as a slice Book struct
+var books []Book
+
 // Get All Books
 func getBooks(w http.ResponseWriter, req *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(books)
 }
 
 // Get Book
@@ -59,7 +64,9 @@ func main() {
 	// Initialize Router
 	router := mux.NewRouter()
 
-	// Mock Data
+	// Mock Data - @todo - implement DB
+	books = append(books, Book{ID: "1", Isbn: "049823", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
+	books = append(books, Book{ID: "2", Isbn: "023423", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
 
 	// Route Handler / Endpoints
 	router.HandleFunc("/api/books", getBooks).Methods("GET")
